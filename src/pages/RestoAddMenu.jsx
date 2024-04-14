@@ -24,7 +24,7 @@ const RestoAddMenu = () => {
     try {
       setAnn(true);
       const res = await fetch(
-        `http://localhost:500/restaurant/menu/${restoId}`,
+        `https://zomato-backend-7clw.onrender.com/restaurant/menu/${restoId}`,
         {
           method: "POST",
           body: formData,

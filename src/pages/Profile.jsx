@@ -36,7 +36,7 @@ const Profile = () => {
     try {
       setShowResto(false);
       setAnable(true);
-      const url = `http://localhost:500/users/update/${currentUser._id}`;
+      const url = `https://zomato-backend-7clw.onrender.com/users/update/${currentUser._id}`;
       const options = {
         method: "POST",
         body: formData,
@@ -65,7 +65,7 @@ const Profile = () => {
 
   //logout
   const logOutHandler = async () => {
-    const res = await fetch("http://localhost:500/users/logout", {
+    const res = await fetch("https://zomato-backend-7clw.onrender.com/users/logout", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const Profile = () => {
 
   // my restorest
   const myResto = async () => {
-    const url = "http://localhost:500/restaurant/myResto";
+    const url = "https://zomato-backend-7clw.onrender.com/restaurant/myResto";
     const options = {
       method: "Get",
       headers: {

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const MyResato = ({ res }) => {
-  console.log("res", res);
+
 
   return (
     <div className="my-5 mx-5 flex gap-5">

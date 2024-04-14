@@ -12,7 +12,7 @@ const MenuRes = () => {
   const [menu, setMenu] = useState([]);
 
   const myResto = async () => {
-    const url = `http://localhost:500/restaurant/currentResto/${_id}`;
+    const url = `https://zomato-backend-7clw.onrender.com/restaurant/currentResto/${_id}`;
     const options = {
       method: "Get",
       headers: {
@@ -35,7 +35,7 @@ const MenuRes = () => {
   };
 
   const menuResto = async () => {
-    const url = `http://localhost:500/restaurant/getMenuItem/${_id}`;
+    const url = `https://zomato-backend-7clw.onrender.com/restaurant/getMenuItem/${_id}`;
     const options = {
       method: "Get",
       headers: {
@@ -61,7 +61,7 @@ const MenuRes = () => {
   }, []);
 
   const addToCart = async ({ items, userId, restaurantId, status }) => {
-    const url = "http://localhost:500/order/addto";
+    const url = "https://zomato-backend-7clw.onrender.com/order/addto";
     const options = {
       method: "POST",
       body: JSON.stringify({

@@ -54,7 +54,7 @@ const Cart = () => {
 
   const deleteCart = async (id) => {
     try {
-      const res = await fetch(`http://localhost:500/order/delete/${id}`, {
+      const res = await fetch(`https://zomato-backend-7clw.onrender.com/order/delete/${id}`, {
         method: "delete",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const Cart = () => {
 
   useEffect(() => {
     const showItems = async () => {
-      const url = `http://localhost:500/order/userOrder/${currentUser?._id}`;
+      const url = `https://zomato-backend-7clw.onrender.com/order/userOrder/${currentUser?._id}`;
       const options = {
         method: "Get",
         headers: {

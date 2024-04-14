@@ -25,7 +25,7 @@ const SingIn = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:500/users/signUp", {
+      const response = await fetch("https://zomato-backend-7clw.onrender.com/users/signUp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Specify the content type

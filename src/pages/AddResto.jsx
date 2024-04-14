@@ -44,7 +44,7 @@ const AddResto = () => {
 
     try {
       setann(true);
-      const url = "http://localhost:500/restaurant/addRes";
+      const url = "https://zomato-backend-7clw.onrender.com/restaurant/addRes";
       const options = {
         method: "POST",
         body: formData,

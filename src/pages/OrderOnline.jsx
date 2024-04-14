@@ -7,7 +7,7 @@ const OrderOnline = () => {
   const [resto, setResto] = useState([]);
 
   const myResto = async () => {
-    const url = "http://localhost:500/restaurant/allResto";
+    const url = "https://zomato-backend-7clw.onrender.com/restaurant/allResto";
     const options = {
       method: "Get",
       headers: {

@@ -17,7 +17,7 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:500/users/login", {
+      const response = await fetch("https://zomato-backend-7clw.onrender.com/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Specify the content type
