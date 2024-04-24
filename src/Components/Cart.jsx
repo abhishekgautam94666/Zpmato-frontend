@@ -32,7 +32,7 @@ const Cart = () => {
 
   const updateQna = async (id, quantity) => {
     try {
-      const res = await fetch(`http://localhost:500/order/updateStatus/${id}`, {
+      const res = await fetch(`https://zomato-backend-7clw.onrender.com/order/updateStatus/${id}`, {
         method: "POST",
         body: JSON.stringify({
           quantity,
