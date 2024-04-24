@@ -6,6 +6,10 @@ import { Link } from "react-router-dom";
 const OrderOnline = () => {
   const [resto, setResto] = useState([]);
 
+  useEffect(() => {
+    myResto();
+  }, []);
+
   const myResto = async () => {
     const url = "https://zomato-backend-7clw.onrender.com/restaurant/allResto";
     const options = {
@@ -28,10 +32,6 @@ const OrderOnline = () => {
       toast.error(data.message);
     }
   };
-
-  useEffect(() => {
-    myResto();
-  }, []);
 
   return (
     <div>
