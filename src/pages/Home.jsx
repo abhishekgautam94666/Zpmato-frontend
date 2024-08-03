@@ -15,7 +15,7 @@ const Home = () => {
   const fetchSearchResult = async (searchQuery) => {
     if (!searchQuery) return;
     const response = await fetch(
-      `http://localhost:500/restaurant/search/${searchQuery}`
+      `${import.meta.env.VITE_URL}/restaurant/search/${searchQuery}`
     );
     const data = await response.json();
     setResults(data.data);
