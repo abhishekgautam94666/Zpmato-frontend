@@ -95,8 +95,11 @@ const Home = () => {
                         />
                         <div className="ml-4">
                           <Link
-                            to={`     
-                            https://zomto.netlify.app/restaurant/order-online/${result.name}/${result._id}`}
+                            to={`${
+                              import.meta.env.VITE_CLIENT
+                            }/restaurant/order-online/${result.name}/${
+                              result._id
+                            }`}
                           >
                             <h3 className="text-lg text-black font-thin">
                               {result.name}
