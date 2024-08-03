@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header1 from "../Components/Header1";
@@ -9,6 +9,7 @@ const SingIn = () => {
   const pass = useRef();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
+  console.log("form data::", formData);
 
   // show password
   const showpass = () => {
@@ -25,7 +26,7 @@ const SingIn = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://zomato-backend-7clw.onrender.com/users/signUp", {
+      const response = await fetch(`${import.meta.env.VITE_URL}/users/signUp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Specify the content type
@@ -91,14 +92,6 @@ const SingIn = () => {
             >
               Create Account
             </button>
-
-            <button
-              type="button"
-              className="py-3 my-2 px-5 rounded-lg w-96 bg-gray-200 text-black"
-            >
-              Sign in Google
-            </button>
-
             <p>
               Aready have an account{" "}
               <span className="px-2 text-blue-600">

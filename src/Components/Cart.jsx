@@ -1,107 +1,63 @@
-import React, { memo, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FaCartShopping } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { MdDelete } from "react-icons/md";
-import toast from "react-hot-toast";
+import {
+  deleteItemCart,
+  incrementItem,
+  decrementItem,
+  emptyState,
+} from "../redux/user/userSlice.js";
+import { memo } from "react";
 
 const Cart = () => {
-  console.log("hjg");
-  const { currentUser } = useSelector((state) => state.user);
+  const { cart } = useSelector((state) => state.user);
   const [active, SetActive] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+
   const [totalBalance, setTotalBalance] = useState(0);
+  const dispatch = useDispatch();
+  const totalPrice = useCallback(() => {
+    const total = cartItems.reduce((pre, item) => {
+      return pre + item.items.price * item.items.quantity;
+    }, 0);
 
-  // const showItems = async () => {
-  //   const url = `http://localhost:500/order/userOrder/${currentUser?._id}`;
-  //   const options = {
-  //     method: "Get",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     credentials: "include",
-  //   };
-  //   try {
-  //     const res = await fetch(url, options);
-  //     const data = await res.json();
-  //     setCartItems(data.orders);
-  //   } catch (error) {
-  //     toast.error(error.message);
-  //   }
-  // };
+    setTotalBalance(total);
+  }, [cartItems]);
 
-  const updateQna = async (id, quantity) => {
+  const checkout = async () => {
     try {
-      const res = await fetch(`https://zomato-backend-7clw.onrender.com/order/updateStatus/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_URL}/order/checkOut`, {
         method: "POST",
-        body: JSON.stringify({
-          quantity,
-        }),
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
+        body: JSON.stringify(cartItems),
       });
-
       const data = await res.json();
-      if (data.success == false) {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+      window.location = data.url;
+      dispatch(emptyState());
 
-  const deleteCart = async (id) => {
-    try {
-      const res = await fetch(`https://zomato-backend-7clw.onrender.com/order/delete/${id}`, {
-        method: "delete",
+      await fetch(`${import.meta.env.VITE_URL}/order/addTo`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
+        body: JSON.stringify(cartItems),
       });
-
-      const data = await res.json();
-      if (data.success == false) {
-        toast.error(data.message);
-      }
-      //window.location.reload();
+      dispatch(emptyState());
     } catch (error) {
-      toast.error(error.message);
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    if (cartItems && cartItems.length > 0) {
-      let total = 0;
-      cartItems.forEach((item) => {
-        total += item.items.price * item.items.quantity;
-      });
-      setTotalBalance(total);
-    }
-  }, [cartItems]);
-
-  useEffect(() => {
-    const showItems = async () => {
-      const url = `https://zomato-backend-7clw.onrender.com/order/userOrder/${currentUser?._id}`;
-      const options = {
-        method: "Get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      };
-      try {
-        const res = await fetch(url, options);
-        const data = await res.json();
-        setCartItems(data.orders);
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
-    showItems();
-  }, [cartItems]);
+    setCartItems(cart);
+    totalPrice();
+  }, [cart, totalPrice]);
 
   return (
     <div className="fixed right-8 top-5 z-50">
@@ -122,10 +78,10 @@ const Cart = () => {
             {cartItems &&
               cartItems.map((item) => (
                 <div
-                  key={item._id}
+                  key={item.foodId}
                   className="border mx-5 my-5 flex p-3 items-center gap-4"
                 >
-                  <img className="w-10 h-10 " src={item.items.Url} alt="" />
+                  <img className="w-10 h-10" src={item.items.Url} alt="" />
                   <div className="">
                     <h1 className="text-lg mb-2">
                       {item.items.name.toUpperCase()}
@@ -133,18 +89,14 @@ const Cart = () => {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() =>
-                          updateQna(item._id, item.items.quantity + 1)
-                        }
+                        onClick={() => dispatch(incrementItem(item.foodId))}
                         className="border w-5 hover:bg-red-500 hover:text-white"
                       >
                         +
                       </button>
                       <p>{item.items.quantity}</p>
                       <button
-                        onClick={() =>
-                          updateQna(item._id, item.items.quantity - 1)
-                        }
+                        onClick={() => dispatch(decrementItem(item.foodId))}
                         className="border w-5 hover:bg-red-500"
                       >
                         -
@@ -156,25 +108,42 @@ const Cart = () => {
                   </h1>
                   <MdDelete
                     className="self-start size-6 mt-1 cursor-pointer hover:opacity-35"
-                    onClick={() => deleteCart(item._id)}
+                    onClick={() => dispatch(deleteItemCart(item.foodId))}
                   />
                 </div>
               ))}
           </div>
           {cartItems && (
             <h1 className="text-2xl font-bold ml-5">
-              Total banalce : {totalBalance}
+              Total balance : {totalBalance}
             </h1>
+          )}
+          {cartItems.length > 0 && (
+            <button
+              onClick={checkout}
+              className="mt-8 uppercase bg-red-400 text-white w-[90%] self-center p-1 ml-5 rounded-sm"
+            >
+              checkOut
+            </button>
           )}
         </div>
       ) : (
-        <FaCartShopping
-          className="text-3xl cursor-pointer"
-          onClick={() => SetActive(!active)}
-        />
+        <div>
+          {cart.length > 0 && (
+            <span className="ml-6 absolute bottom-5 text-red-400">
+              ({cart.length})
+            </span>
+          )}
+          <FaCartShopping
+            className="text-3xl cursor-pointer text-red-500"
+            onClick={() => SetActive(!active)}
+          />
+        </div>
       )}
     </div>
   );
 };
 
-export default Cart;
+export default memo(Cart, (prevProps, nextProps) => {
+  return prevProps.cart === nextProps.cart;
+});

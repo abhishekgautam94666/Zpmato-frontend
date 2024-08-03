@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header1 from "../Components/Header1";
+import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { emptyState } from "../redux/user/userSlice";
 
 const OrderOnline = () => {
   const [resto, setResto] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     myResto();
   }, []);
 
   const myResto = async () => {
-    const url = "https://zomato-backend-7clw.onrender.com/restaurant/allResto";
+    const url = `${import.meta.env.VITE_URL}/restaurant/allResto`;
     const options = {
       method: "Get",
       headers: {
@@ -21,6 +24,7 @@ const OrderOnline = () => {
     };
 
     try {
+      dispatch(emptyState());
       const res = await fetch(url, options);
       const data = await res.json();
       if (data.success == false) {
@@ -29,7 +33,7 @@ const OrderOnline = () => {
         setResto(data.resto);
       }
     } catch (error) {
-      toast.error(data.message);
+      toast.error(error.message);
     }
   };
 
@@ -44,13 +48,24 @@ const OrderOnline = () => {
           </h1>
           <div className=" flex flex-wrap  justify-center lg:justify-start gap-8 my-8">
             {resto.map((item) => (
-              <Link key={item._id} to={`${item.name}/${item._id}`}>
+              <Link
+                key={item._id}
+                to={`${item.name}/${item._id}`}
+                aria-label={`Link to ${item.name}`}
+              >
                 <div className="border w-[320px] h-[350px] rounded-lg shadow-lg">
-                  <img
-                    className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75"
-                    src={item.resImage[0].url}
-                    alt=""
-                  />
+                  {item.resImage && item.resImage.length > 0 ? (
+                    <img
+                      className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75"
+                      src={item.resImage[0].url}
+                      alt={`Image of ${item.name}`}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75 bg-gray-200 flex items-center justify-center">
+                      <span>No Image Available</span>
+                    </div>
+                  )}
                   <p className="pt-3 text-xl pl-3">{item.name}</p>
                   <p className="font-thin pl-3">{item.cuisine_type}</p>
                 </div>

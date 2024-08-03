@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header1 from "../Components/Header1";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -24,7 +24,7 @@ const RestoAddMenu = () => {
     try {
       setAnn(true);
       const res = await fetch(
-        `https://zomato-backend-7clw.onrender.com/restaurant/menu/${restoId}`,
+        `${import.meta.env.VITE_URL}/restaurant/menu/${restoId}`,
         {
           method: "POST",
           body: formData,

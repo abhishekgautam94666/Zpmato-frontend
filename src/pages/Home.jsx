@@ -2,14 +2,29 @@ import asset2 from "../assets/asset 1.avif";
 import { CiSearch } from "react-icons/ci";
 import { FaLocationDot } from "react-icons/fa6";
 import ico from "../assets/asset 7.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import debounce from "lodash.debounce";
 import Header from "../Components/Header";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Home = () => {
   const [add, setAdd] = useState("");
-  const { back } = useSelector((state) => state.user);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  const fetchSearchResult = async (searchQuery) => {
+    if (!searchQuery) return;
+    const response = await fetch(
+      `http://localhost:500/restaurant/search/${searchQuery}`
+    );
+    const data = await response.json();
+    setResults(data.data);
+  };
+
+  const debouncedFetchResults = useCallback(
+    debounce(fetchSearchResult, 300),
+    []
+  );
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -19,8 +34,13 @@ const Home = () => {
         .then((res) => res.json())
         .then((data) => setAdd(`${data.address.state},${data.address.city}`));
     });
-  }, []);
 
+    debouncedFetchResults(query);
+  }, [query]);
+
+  const HandleChange = (e) => {
+    setQuery(e.target.value);
+  };
   return (
     <div className={`z-0`}>
       <div className="flex flex-col">
@@ -35,8 +55,7 @@ const Home = () => {
           <p className="text-4xl">
             Discover the best food & drinks in Yamuna Nagar
           </p>
-
-          <div className="flex items-center justify-evenly bg-white rounded-lg">
+          <div className="bg-white flex items-center justify-evenly rounded-lg">
             <div className=" w-[50%] text-gray-300 flex justify-center items-center pl-10">
               <FaLocationDot className="size-7 text-red-500" />
               <input
@@ -50,9 +69,54 @@ const Home = () => {
               <CiSearch className="text-3xl text-gray-400 " />
               <input
                 className="w-full py-3 text-slate-800 outline-none"
-                placeholder="search for restaurant, cuisin or a dish"
+                placeholder="search for restaurant"
                 type="search"
+                value={query}
+                onChange={HandleChange}
               />
+            </div>
+
+            <div className="w-[50%] max-md:mt-7 absolute top-48 right-0">
+              {results?.length > 0 && (
+                <div className="my-10 bg-white rounded-lg shadow-lg p-4">
+                  <ul className="space-y-4">
+                    {results.map((result, index) => (
+                      <li
+                        key={index}
+                        className="p-4 border rounded-lg shadow flex"
+                      >
+                        <img
+                          src={
+                            result.resImage[0]?.secureUrl ||
+                            "default-image-url.jpg"
+                          }
+                          alt={result.name}
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
+                        <div className="ml-4">
+                          <Link
+                            to={`${
+                              import.meta.env.VITE_ClIENT
+                            }/restaurant/order-online/${result.name}/${
+                              result._id
+                            }`}
+                          >
+                            <h3 className="text-lg text-black font-thin">
+                              {result.name}
+                            </h3>
+                            <p className="text-gray-700">
+                              {result.city}, {result.state}
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                              {`${result.opening_hours} to ${result.closing_hours}`}
+                            </p>
+                          </Link>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

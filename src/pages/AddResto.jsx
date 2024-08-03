@@ -1,32 +1,96 @@
-import React, { useState } from "react";
-import Header1 from "../Components/Header1";
-import { currentResto } from "../redux/user/userSlice.js";
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Header1 from "../Components/Header1";
 
 const AddResto = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { restaurant, currentUser } = useSelector((state) => state.user);
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [description, setdescription] = useState();
-  const [address, setAddress] = useState();
-  const [state, setstate] = useState();
-  const [city, setcity] = useState();
-  const [phone, setPhoneNo] = useState();
-  const [cuisine_type, setcuisine_type] = useState();
-  const [closing_hours, setclosing_hours] = useState();
-  const [opening_hours, setopening_hours] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setdescription] = useState("");
+  const [address, setAddress] = useState("");
+  const [state, setstate] = useState("");
+  const [city, setcity] = useState("");
+  const [phone, setPhoneNo] = useState("");
+  const [cuisine_type, setcuisine_type] = useState("");
+  const [closing_hours, setclosing_hours] = useState("");
+  const [opening_hours, setopening_hours] = useState("");
   const [resImage, setresImage] = useState();
-  const [ann, setann] = useState(false);
-  console.log(resImage);
+  const [ann, setAnn] = useState(false);
 
   // AddResto //////////////////////////////
-  const AddResto = async (e) => {
-    e.preventDefault();
+  // const AddResto = async (e) => {
+  //   e.preventDefault();
+  //   console.log();
 
+  //   const formData = new FormData();
+  //   formData.append("name", name);
+  //   formData.append("email", email);
+  //   formData.append("description", description);
+  //   formData.append("address", address);
+  //   formData.append("state", state);
+  //   formData.append("city", city);
+  //   formData.append("phone", phone);
+  //   formData.append("cuisine_type", cuisine_type);
+  //   formData.append("closing_hours", closing_hours);
+  //   formData.append("opening_hours", opening_hours);
+  //   for (const file of resImage) {
+  //     formData.append("resImage", file);
+  //   }
+  //   try {
+  //     setann(true);
+  //     const url = `${import.meta.env.VITE_URL}/restaurant/addRes`;
+  //     const options = {
+  //       method: "POST",
+  //       body: formData,
+  //       credentials: "include",
+  //     };
+
+  //     const response = await fetch(url, options);
+  //     const data = await response.json();
+  //     if (data.success == false) {
+  //       toast.error(data.message);
+  //       setann(false);
+  //     }
+  //     //  dispatch(currentResto(data.createRestaurant));
+  //     toast.success(data.message);
+  //     setann(true);
+  //     navigate("/profile");
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //     setann(false);
+  //   }
+  // };
+
+  const debouncedAddResto = useCallback(async (formData) => {
+    try {
+      setAnn(true);
+      const url = `${import.meta.env.VITE_URL}/restaurant/addRes`;
+      const options = {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!data.success) {
+        toast.error(data.message);
+        setAnn(false);
+      } else {
+        toast.success(data.message);
+        setAnn(true);
+        navigate("/profile");
+      }
+    } catch (error) {
+      toast.error(error.message);
+      setAnn(false);
+    }
+  }, []);
+
+  const AddResto = (e) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -41,34 +105,26 @@ const AddResto = () => {
     for (const file of resImage) {
       formData.append("resImage", file);
     }
-
-    try {
-      setann(true);
-      const url = "https://zomato-backend-7clw.onrender.com/restaurant/addRes";
-      const options = {
-        method: "POST",
-        body: formData,
-        headers: {
-          // "Content-Type": "multipart/form-data",
-        },
-        credentials: "include",
-      };
-
-      const response = await fetch(url, options);
-      const data = await response.json();
-      if (data.success == false) {
-        toast.error(data.message);
-        setann(false);
-      }
-      dispatch(currentResto(data.createRestaurant));
-      toast.success(data.message);
-      setann(true);
-      navigate("/profile");
-    } catch (error) {
-      toast.error(error.message);
-      setann(false);
-    }
+    debouncedAddResto(formData);
   };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const formData = new FormData();
+  //   formData.append("name", name);
+  //   formData.append("email", email);
+  //   formData.append("description", description);
+  //   formData.append("address", address);
+  //   formData.append("state", state);
+  //   formData.append("city", city);
+  //   formData.append("phone", phone);
+  //   formData.append("cuisine_type", cuisineType);
+  //   formData.append("closing_hours", closingHours);
+  //   formData.append("opening_hours", openingHours);
+  //   for (const file of resImage) {
+  //     formData.append("resImage", file);
+  //   }
+  //   debouncedAddResto(formData);
+  // };
 
   return (
     <div>
@@ -79,7 +135,6 @@ const AddResto = () => {
         <div className="max-w-6xl mx-auto flex gap-5 justify-center">
           <div className="sticky top-5 w-[250px] h-[300px] rounded-lg ml-5 shadow-2xl my-8 hidden sm:block">
             <h2 className="text-md font-semibold py-2">
-              {" "}
               1. Cteate your restaurant page
             </h2>
             <hr />
@@ -196,7 +251,7 @@ const AddResto = () => {
                 type="submit"
                 className="p-3 border my-2 mx-5 rounded-xl bg-red-400 text-white"
               >
-                Add restaurant{" "}
+                Add restaurant
               </button>
             </form>
           </div>

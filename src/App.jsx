@@ -2,6 +2,8 @@ import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import Home from "./pages/Home.jsx";
 import Navbar from "./Components/Navbar.jsx";
+import Success from "./pages/Success.jsx";
+import Cancel from "./pages/Cancel.jsx";
 // import SingIn from "./pages/SingIn.jsx";
 // import Login from "./pages/Login.jsx";
 // import Profile from "./pages/Profile.jsx";
@@ -38,6 +40,8 @@ function App() {
             path="/restaurant/order-online/:name/:_id"
             element={<MenuRes />}
           />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
         </Routes>
       </Suspense>
       <Navbar />

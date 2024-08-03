@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header1 from "../Components/Header1";
 import { signInSuccess } from "../redux/user/userSlice.js";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import MyResato from "../Components/MyResato.jsx";
+import CurrentResto from "../Components/CurrentResto.jsx";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -14,12 +15,13 @@ const Profile = () => {
   const [showResto, setShowResto] = useState(false);
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || " ");
-  const [password, setPassword] = useState(currentUser?.password || "");
   const [address, setAddress] = useState(currentUser?.address || "");
   const [phone, setPhoneNo] = useState(currentUser?.phoneNO || "");
   const [avtar, setAvtar] = useState();
   const [anable, setAnable] = useState(false);
   const [resto, setResto] = useState([]);
+  const [current, setCurrent] = useState([]);
+  const [cuOrd, setCuOrd] = useState(false);
 
   // update edit profile
   const updateHandle = async (e) => {
@@ -28,7 +30,6 @@ const Profile = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
-    formData.append("password", password);
     formData.append("address", address);
     formData.append("phoneNO", phone);
     formData.append("avtar", avtar);
@@ -36,7 +37,7 @@ const Profile = () => {
     try {
       setShowResto(false);
       setAnable(true);
-      const url = `https://zomato-backend-7clw.onrender.com/users/update/${currentUser._id}`;
+      const url = `${import.meta.env.VITE_URL}/users/update/${currentUser._id}`;
       const options = {
         method: "POST",
         body: formData,
@@ -65,7 +66,7 @@ const Profile = () => {
 
   //logout
   const logOutHandler = async () => {
-    const res = await fetch("https://zomato-backend-7clw.onrender.com/users/logout", {
+    const res = await fetch(`${import.meta.env.VITE_URL}/users/logout`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +85,7 @@ const Profile = () => {
 
   // my restorest
   const myResto = async () => {
-    const url = "https://zomato-backend-7clw.onrender.com/restaurant/myResto";
+    const url = `${import.meta.env.VITE_URL}/restaurant/myResto`;
     const options = {
       method: "Get",
       headers: {
@@ -94,6 +95,7 @@ const Profile = () => {
     };
 
     try {
+      setCuOrd(false);
       setEdit(false);
       setShowResto(true);
       const res = await fetch(url, options);
@@ -108,6 +110,32 @@ const Profile = () => {
     } catch (error) {
       toast.error(data.message);
       setShowResto(false);
+    }
+  };
+
+  // currentOrder
+  const currentOrder = async () => {
+    setEdit(false);
+    setShowResto(false);
+    setCuOrd(true);
+    try {
+      const url = `${import.meta.env.VITE_URL}/order/userOrder/${
+        currentUser._id
+      }`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success == false) {
+        toast.error(data.message);
+      }
+      setCurrent(data.orders);
+    } catch (error) {
+      toast.error(data.message);
     }
   };
 
@@ -138,7 +166,9 @@ const Profile = () => {
             </h1>
           </div>
           <button
-            onClick={() => setEdit(!edit)}
+            onClick={() => {
+              return setEdit(!edit), setCuOrd(false), setShowResto(false);
+            }}
             type="button"
             className=" w-auto p-3 text-center bg-red-500 rounded-md mr-6 text-white"
           >
@@ -157,9 +187,12 @@ const Profile = () => {
             >
               My restaurant
             </button>
-            <li className="p-2 hover:active:bg-red-500 hover:bg-red-200 cursor-pointer">
+            <button
+              onClick={() => currentOrder()}
+              className="p-2 hover:active:bg-red-500 hover:bg-red-200 cursor-pointer"
+            >
               My Order
-            </li>
+            </button>
             <li className="p-2 hover:active:bg-red-500 hover:bg-red-200 cursor-pointer">
               Favourites order
             </li>
@@ -195,14 +228,14 @@ const Profile = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <input
+              {/* <input
                 className="w-full border p-3 my-2 outline-none rounded-lg"
                 type="password"
                 placeholder="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-              />
+              /> */}
               <input
                 className="w-full border p-3 my-2 outline-none rounded-lg"
                 type="text"
@@ -213,7 +246,7 @@ const Profile = () => {
               />
               <input
                 className="w-full border p-3 my-2 outline-none rounded-lg"
-                type="text"
+                type="tel"
                 placeholder="Phone NO"
                 id="PhoneNo"
                 value={phone}
@@ -245,7 +278,11 @@ const Profile = () => {
           </div>
         )}
 
-        
+        {current && cuOrd && (
+          <div>
+            <CurrentResto currORd={current} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Header1 from "../Components/Header1";
-import { signInSuccess } from "../redux/user/userSlice.js";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import { signInSuccess } from "../redux/user/userSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://zomato-backend-7clw.onrender.com/users/login", {
+      const response = await fetch(`${import.meta.env.VITE_URL}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Specify the content type
@@ -40,7 +40,7 @@ const Login = () => {
 
   return (
     <>
-      <Header1  AddRes={"Add restaurant"} zom={"Zomato"}/>
+      <Header1 AddRes={"Add restaurant"} zom={"Zomato"} />
       <div className="w-[100%] h-[70vh] flex justify-center items-center mt-20 mb-20">
         <div className="px-4 py-4 rounded-lg shadow-xl">
           <h1 className="mb-10 text-3xl">Login</h1>
@@ -68,13 +68,6 @@ const Login = () => {
               className="py-3 my-2 px-5 rounded-lg w-96 bg-red-500 text-white"
             >
               Login
-            </button>
-
-            <button
-              type="submit"
-              className="py-3 my-2 px-5 rounded-lg w-96 bg-gray-200 text-black"
-            >
-              Sign in Google
             </button>
 
             <p>
