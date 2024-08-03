@@ -7,6 +7,7 @@ import { emptyState } from "../redux/user/userSlice";
 
 const OrderOnline = () => {
   const [resto, setResto] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,6 +35,8 @@ const OrderOnline = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,30 +50,39 @@ const OrderOnline = () => {
             Delivery Restaurants in Yamuna Nagar Locality
           </h1>
           <div className=" flex flex-wrap  justify-center lg:justify-start gap-8 my-8">
-            {resto.map((item) => (
-              <Link
-                key={item._id}
-                to={`${item.name}/${item._id}`}
-                aria-label={`Link to ${item.name}`}
-              >
-                <div className="border w-[320px] h-[350px] rounded-lg shadow-lg">
-                  {item.resImage && item.resImage.length > 0 ? (
-                    <img
-                      className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75"
-                      src={item.resImage[0].url}
-                      alt={`Image of ${item.name}`}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75 bg-gray-200 flex items-center justify-center">
-                      <span>No Image Available</span>
+            {loading
+              ? Array.from({ length: 9 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="border w-[320px] h-[350px] rounded-lg shadow-lg animate-pulse"
+                  >
+                    <div className="h-[248px] rounded-t-lg bg-gray-200"></div>
+                  </div>
+                ))
+              : resto.map((item) => (
+                  <Link
+                    key={item._id}
+                    to={`${item.name}/${item._id}`}
+                    aria-label={`Link to ${item.name}`}
+                  >
+                    <div className="border w-[320px] h-[350px] rounded-lg shadow-lg">
+                      {item.resImage && item.resImage.length > 0 ? (
+                        <img
+                          className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75"
+                          src={item.resImage[0].url}
+                          alt={`Image of ${item.name}`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="h-[248px] rounded-t-lg cursor-pointer hover:opacity-75 bg-gray-200 flex items-center justify-center">
+                          <span>No Image Available</span>
+                        </div>
+                      )}
+                      <p className="pt-3 text-xl pl-3">{item.name}</p>
+                      <p className="font-thin pl-3">{item.cuisine_type}</p>
                     </div>
-                  )}
-                  <p className="pt-3 text-xl pl-3">{item.name}</p>
-                  <p className="font-thin pl-3">{item.cuisine_type}</p>
-                </div>
-              </Link>
-            ))}
+                  </Link>
+                ))}
           </div>
         </div>
       </div>
