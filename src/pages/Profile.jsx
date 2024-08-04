@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header1 from "../Components/Header1";
-import { signInSuccess } from "../redux/user/userSlice.js";
+import { currUser, signInSuccess } from "../redux/user/userSlice.js";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import MyResato from "../Components/MyResato.jsx";
@@ -76,6 +76,7 @@ const Profile = () => {
     const data = await res.json();
     if (data.success == true) {
       dispatch(signInSuccess(null));
+      dispatch(currUser());
       toast.success(data.message);
       navigate("/login");
     } else {
