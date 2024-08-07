@@ -104,52 +104,50 @@ const MenuRes = () => {
                 <p className="text-2xl mt-2 font-semibold">{item.name}</p>
                 <p className="font-thin">{item.city}</p>
                 <hr className="my-5" />
+              </div>
+            ))
+          )}
+        </div>
+        <div className="max-w-5xl mx-auto ">
+          <h1>Order Online</h1>
+          {load ? (
+            <SkeletenMenu />
+          ) : (
+            menu &&
+            menu.map((items) => (
+              <div className="w-[70%] my-6 flex gap-5" key={items._id}>
+                <img
+                  className="w-[100px] h-[100px] rounded-lg shadow-2xl bg-transparent"
+                  src={items.foodImg?.url}
+                  alt=""
+                />
 
-                <div className="w-full">
-                  <h1>Order Online</h1>
-
-                  {load ? (
-                    <SkeletenMenu />
-                  ) : (
-                    menu &&
-                    menu.map((items) => (
-                      <div className="w-[70%] my-6 flex gap-5" key={items._id}>
-                        <img
-                          className="w-[100px] h-[100px] rounded-lg shadow-2xl bg-transparent"
-                          src={items.foodImg?.url}
-                          alt=""
-                        />
-
-                        <div>
-                          <p className="text-xl font-semibold">{items.name}</p>
-                          <p className="font-thin">₹ {items.price}</p>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              dispatch(
-                                addCart({
-                                  userId: currentUser?._id,
-                                  userAddress: currentUser?.address || null,
-                                  restaurantId: items.restaurantId,
-                                  foodId: items._id,
-                                  items: {
-                                    name: items.name,
-                                    quantity: 1,
-                                    price: items.price,
-                                    Url: items.foodImg?.url,
-                                  },
-                                  status: "Pending",
-                                })
-                              )
-                            }
-                            className="border p-1 px-5 rounded-lg mt-3 bg-red-500 text-white"
-                          >
-                            Add to Cart
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                <div>
+                  <p className="text-xl font-semibold">{items.name}</p>
+                  <p className="font-thin">₹ {items.price}</p>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      dispatch(
+                        addCart({
+                          userId: currentUser?._id,
+                          userAddress: currentUser?.address || null,
+                          restaurantId: items.restaurantId,
+                          foodId: items._id,
+                          items: {
+                            name: items.name,
+                            quantity: 1,
+                            price: items.price,
+                            Url: items.foodImg?.url,
+                          },
+                          status: "Pending",
+                        })
+                      )
+                    }
+                    className="border p-1 px-5 rounded-lg mt-3 bg-red-500 text-white"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             ))
