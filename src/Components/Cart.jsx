@@ -10,9 +10,10 @@ import {
   emptyState,
 } from "../redux/user/userSlice.js";
 import { memo } from "react";
+import toast from "react-hot-toast";
 
 const Cart = () => {
-  const { cart } = useSelector((state) => state.user);
+  const { cart, currentUser } = useSelector((state) => state.user);
   const [active, SetActive] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
@@ -28,6 +29,10 @@ const Cart = () => {
 
   const checkout = async () => {
     try {
+      if (!currentUser) {
+        toast.success("Pleas Login");
+        return;
+      }
       const res = await fetch(`${import.meta.env.VITE_URL}/order/checkOut`, {
         method: "POST",
         headers: {
